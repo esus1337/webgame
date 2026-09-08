@@ -128,6 +128,23 @@ src/ui/       pointer input, HUD, screens, localStorage
 `src/core/` and `src/game/` never touch `document` or `window`, which is what
 makes map generation and the whole simulation testable headlessly.
 
+## Deploying
+
+The repository is ready to deploy to Vercel as a static site; `vercel.json`
+carries the whole configuration:
+
+- Vite build to `dist/`, with `npm run typecheck` in front of it — `vite build`
+  does not typecheck, so without this a type error would ship silently.
+- An install command that sets `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1`. Otherwise
+  `@playwright/test`'s postinstall pulls ~100MB of Chromium into every deploy
+  for a dev-only dependency the build never uses.
+- A one-year immutable cache on the hashed asset bundles. `index.html` is left
+  alone so a new deploy is picked up immediately.
+
+To connect it: Vercel → Add New → Project → Import `esus1337/webgame` → Deploy.
+No settings need changing; `vercel.json` supplies them, and every push to the
+production branch redeploys.
+
 ## Tuning
 
 Every balance number lives in `src/game/config.ts` — province count, nation
